@@ -22,17 +22,33 @@
 
 from bottle import request, route, run, template
 from polyglot.detect import Detector
+from polyglot.text import Text
 
-@route('/detect')
+@route('/detect', method='POST')
 def detect():
-    trimmed = request.query.q.strip()
-    query = (trimmed[:4096]) if len(trimmed) > 4096 else trimmed
-    # quiet=True -- don't throw exception when detection is unreliable
+    query = request.json['text']
+
     detector = Detector(query, quiet=True)
-    out = '{"locale":"{{locl}}","confidence":{{conf}},"read_bytes":{{read}}}'
     locl = detector.language.locale.getName().replace('_', '-')
     conf = detector.language.confidence
     read = detector.language.read_bytes
-    return template(out, locl=locl, conf=conf, read=read)
+
+    parsed = []
+    try:
+        blob = Text(query)
+        for entity in blob.entities:
+            eobj = {}
+            eobj['tag'] = entity.tag
+            eobj['entity'] = entity
+            parsed.append(eobj)
+    except:
+        pass
+
+    return {
+        "locale":locl,
+        "confidence":conf,
+        "read_bytes":read,
+        "entities":parsed
+    }
 
 run(host='0.0.0.0', port=80, quiet=True)

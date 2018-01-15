@@ -8,32 +8,59 @@ A micro service for small natural language processing, powered by Polyglot.
 # Launch example
 
     #!/bin/sh
-
-    docker run --rm -d -p 34567:80 turbulent/polyglot-service
+    docker run --rm -d -p 34567:80 gaving/polyglot-service
 
 # Services Available
 ## Detect Language
-After launching, try these requests:
+After launching, try this requests:
 
-    #!/bin/sh
-
-    wget -q -O - "http://localhost:34567/detect?q=Hello World!"
-    wget -q -O - "http://localhost:34567/detect?q=Ceci n'est pas un pipe"
-    wget -q -O - "http://localhost:34567/detect?q=我需要你的帮助。这是紧急情况。"
-    wget -q -O - "http://localhost:34567/detect?q=我需要你的幫助。這是緊急情況。"
-    wget -q -O - "http://localhost:34567/detect?q=Все люди рождаются свободными и равными в своем достоинстве и правах."
-    wget -q -O - "http://localhost:34567/detect?q=Всі люди народжуються вільними і рівними у своїй гідності та правах."
+```
+curl -XPOST http://localhost:34567/detect -H "Content-Type: application/json" \ 
+-d '{"text":"Trump lashed out at his former rival on Saturday in New York,
+calling Clinton the worst (and biggest) loser of all time, after the
+ex-Democratic Party nominee made pointed criticisms in a series of interviews
+about Trumps political and moral legitimacy."}'
+```
 
 ### Detect Language Responses
 The responses will be JSON, featuring HTML-oriented "locale", confidence level,
 and the count of "read_bytes":
 
-    {"locale":"en", "confidence":"92.0", "read_bytes": "1194"}
-    {"locale":"fr", "confidence":"95.0", "read_bytes": "890"}
-    {"locale":"zh", "confidence":"97.0", "read_bytes": "2048"}
-    {"locale":"zh-Hant", "confidence":"97.0", "read_bytes": "1923"}
-    {"locale":"ru", "confidence":"99.0", "read_bytes": "927"}
-    {"locale":"uk", "confidence":"99.0", "read_bytes": "851"}
+```json
+    {
+      "locale": "en",
+      "confidence": 99,
+      "read_bytes": 1114,
+      "entities": [
+        {
+          "tag": "I-PER",
+          "entity": [
+            "Trump"
+          ]
+        },
+        {
+          "tag": "I-LOC",
+          "entity": [
+            "New",
+            "York"
+          ]
+        },
+        {
+          "tag": "I-PER",
+          "entity": [
+            "Clinton"
+          ]
+        },
+        {
+          "tag": "I-ORG",
+          "entity": [
+            "Democratic",
+            "Party"
+          ]
+        }
+      ]
+    }
+```
 
 # Copyright & License
 Copyright (C) 2017  Turbulent Media inc.

@@ -25,5 +25,6 @@ EXPOSE 80
 RUN mkdir /usr/src/app \
     && pip install --no-cache-dir bottle
 WORKDIR /usr/src/app
+RUN polyglot download embeddings2.en ner2.en
 COPY service.py /usr/src/app/
 CMD python /usr/src/app/service.py
