@@ -8,7 +8,7 @@ A micro service for small natural language processing, powered by Polyglot.
 # Launch example
 
     #!/bin/sh
-    docker run --rm -d -p 34567:80 gaving/polyglot-service
+    docker run --rm -d -p 34567:80 turbulent/polyglot-service
 
 # Services Available
 ## Detect Language
